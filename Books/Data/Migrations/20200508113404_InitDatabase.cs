@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Books.Data.Migrations
+namespace Books.Migrations
 {
     public partial class InitDatabase : Migration
     {
@@ -47,14 +47,13 @@ namespace Books.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "AuthorEntities",
+                name: "Author`1Entities",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     FirstName = table.Column<string>(nullable: true),
-                    LastName = table.Column<string>(nullable: true),
-                    FullName = table.Column<string>(nullable: true)
+                    LastName = table.Column<string>(nullable: true)
                 },
                 constraints: table =>
                 {
