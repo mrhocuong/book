@@ -2,8 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Books.Data;
+using Books.EntityModels;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 
@@ -13,7 +17,37 @@ namespace Books
     {
         public static void Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
+            var host = CreateHostBuilder(args).Build();
+            SeedData(host);
+            host.Run();
+        }
+
+        public static void SeedData(IHost host)
+        {
+            using (var scope = host.Services.CreateScope())
+            {
+                var service = scope.ServiceProvider;
+                //apply migration
+                var dbContext = service.GetRequiredService<ApplicationDbContext>();
+                dbContext.Database.Migrate();
+                var data = SeedDataHelper.GetSampleData();
+                var authors = data.Select(x => x.Author).Distinct().ToList();
+                foreach (var author in authors)
+                {
+                    var split = author.Split(" ");
+                    var authorEnity = new AuthorEntity
+                    {
+                        FirstName = split[0],
+                        LastName = split.Length > 1 ? split[1] : ""
+                    };
+                    dbContext.Set<AuthorEntity>().Add(authorEnity);
+                }
+
+                dbContext.SaveChanges();
+                
+                
+                
+            }
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

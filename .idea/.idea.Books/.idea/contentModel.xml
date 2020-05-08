@@ -185,11 +185,15 @@
           <e p="Migrations" t="Include">
             <e p="00000000000000_CreateIdentitySchema.cs" t="Include" />
             <e p="00000000000000_CreateIdentitySchema.Designer.cs" t="Include" />
-            <e p="ApplicationDbContextModelSnapshot.cs" t="Include" />
           </e>
+        </e>
+        <e p="EntityModels" t="Include">
+          <e p="AuthorEntity.cs" t="Include" />
+          <e p="BookEntity.cs" t="Include" />
         </e>
         <e p="Models" t="Include">
           <e p="ApplicationUser.cs" t="Include" />
+          <e p="BookSeedModel.cs" t="Include" />
         </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
@@ -211,6 +215,7 @@
         <e p="Properties" t="Include">
           <e p="launchSettings.json" t="Include" />
         </e>
+        <e p="SeedDataHelper.cs" t="Include" />
         <e p="Startup.cs" t="Include" />
         <e p="WeatherForecast.cs" t="Include" />
         <e p="wwwroot" t="Include">
