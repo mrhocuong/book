@@ -6,10 +6,10 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace Books.Data.Migrations
+namespace Books.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20200508111629_InitDatabase")]
+    [Migration("20200508113404_InitDatabase")]
     partial class InitDatabase
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,9 +25,6 @@ namespace Books.Data.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("FirstName")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FullName")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("LastName")

@@ -22,35 +22,56 @@ namespace Books
             host.Run();
         }
 
-        public static void SeedData(IHost host)
+        private static void SeedData(IHost host)
         {
-            using (var scope = host.Services.CreateScope())
+            using var scope = host.Services.CreateScope();
+            
+            var service = scope.ServiceProvider;
+            //apply migration
+            var dbContext = service.GetRequiredService<ApplicationDbContext>();
+            dbContext.Database.Migrate();
+            var data = SeedDataHelper.GetSampleData();
+            var authors = data.Select(x => x.Author).Distinct().ToList();
+            foreach (var author in authors)
             {
-                var service = scope.ServiceProvider;
-                //apply migration
-                var dbContext = service.GetRequiredService<ApplicationDbContext>();
-                dbContext.Database.Migrate();
-                var data = SeedDataHelper.GetSampleData();
-                var authors = data.Select(x => x.Author).Distinct().ToList();
-                foreach (var author in authors)
+                var split = author.Split(" ");
+                var authorEnity = new AuthorEntity
                 {
-                    var split = author.Split(" ");
-                    var authorEnity = new AuthorEntity
-                    {
-                        FirstName = split[0],
-                        LastName = split.Length > 1 ? split[1] : ""
-                    };
-                    dbContext.Set<AuthorEntity>().Add(authorEnity);
+                    FirstName = split[0],
+                    LastName = split.Length > 1 ? split[1] : "",
+                };
+                dbContext.Set<AuthorEntity>().Add(authorEnity);
+            }
+
+            dbContext.SaveChanges();
+
+            var authorEntity = dbContext.AuthorEntities.Select(x => new
+            {
+                x.Id, 
+                FullName = $"{x.FirstName} {x.LastName}"
+            }).ToList();
+            
+            for (var index = 0; index < data.Count; index++)
+            {
+                var book = data[index];
+                var author = authorEntity.FirstOrDefault(x => x.FullName == book.Author);
+                if (author == null)
+                {
+                    continue;
                 }
 
-                dbContext.SaveChanges();
-                
-                
-                
+                var bookEntity = new BookEntity
+                {
+                    Title = book.Title,
+                    PublishedOn = DateTime.UtcNow.AddDays(index * -1),
+                    AuthorId = author.Id,
+                };
+                dbContext.Set<BookEntity>().Add(bookEntity);
             }
+            dbContext.SaveChanges();
         }
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
+        private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
     }
